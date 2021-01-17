@@ -1,0 +1,32 @@
+# Define a classic Loadbalancer
+resource "aws_elb" "classic_lb" {
+  name = "test-classic-loadbalancer"
+  security_groups = [module.vpc_and_subnet.lb_sg_id]
+  subnets = [module.vpc_and_subnet.subnet_id]
+
+  listener {
+    instance_port = 80
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http"
+  }
+
+  health_check {
+    healthy_threshold = 3 // No. of checks before the instance is declared healthy
+    interval = 30
+    target = "http:80/"
+    timeout = 5
+    unhealthy_threshold = 10 // No. of check before the instance is declared unhealthy
+  }
+}
+
+resource "aws_elb_attachment" "classic_lb_instance_attach" {
+  count = var.instance_count
+  elb = aws_elb.classic_lb.id
+  instance = aws_instance.test_instance[count.index].id
+}
+
+
+output "classic_lb_name" {
+  value = aws_elb.classic_lb.dns_name
+}

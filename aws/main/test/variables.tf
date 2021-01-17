@@ -1,13 +1,5 @@
-variable "instance_type" {
+variable "instance_flavour" {
   default = "t2.micro"
-}
-
-variable "access_key" {
-  description = "The AWS access key of the gen account"
-}
-
-variable "secret_key" {
-  description = "The secret of the provided access key"
 }
 
 variable "image_id" {
@@ -16,7 +8,13 @@ variable "image_id" {
 }
 
 variable "instance_count" {
-  default = 2
+  default = 1
   type = number
   description = "The number of instances to create"
+}
+
+variable "instance_name" {
+  default = "terraform-managed"
+  description = "Gives a name to the EC2 instance to identify in AWS console"
+  type = string
 }

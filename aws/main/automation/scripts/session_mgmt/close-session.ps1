@@ -1,4 +1,4 @@
-New-Variable -Name ids -Value (terraform13 output instance_ids)
+New-Variable -Name ids -Value (terraform output instance_ids)
 # echo $ids
 
 foreach ($id in $ids.Split(" "))
