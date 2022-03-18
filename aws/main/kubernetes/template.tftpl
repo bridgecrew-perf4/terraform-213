@@ -1,0 +1,9 @@
+[master]
+%{ for instance in master_instances ~}
+${instance.public_dns} ansible_host="${instance.public_ip}"
+%{ endfor ~}
+
+[worker]
+%{ for instance in worker_instances ~}
+${instance.public_dns} ansible_host="${instance.public_ip}"
+%{ endfor ~}

@@ -1,0 +1,4 @@
+[test]
+%{ for instance in instances ~}
+${instance.public_dns} ansible_host="${instance.public_ip}"
+%{ endfor ~}

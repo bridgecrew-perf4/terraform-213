@@ -1,0 +1,12 @@
+# Ignore any aws config/credential files present
+**/.aws/*
+/aws/credentials/
+
+# Ignore any id_rsa files created
+**/*id_rsa
+**/.ssh/
+
+/aws/Pricing
+/aws/main/**/outputs/
+/aws/main/**/plan
+**/.terraform/
