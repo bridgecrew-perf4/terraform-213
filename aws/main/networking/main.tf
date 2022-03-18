@@ -5,11 +5,11 @@ resource "aws_vpc" "network" {
 
 // Create Security group module
 module "vpc_and_subnet" {
-  source = "modules/network"
+  source = "./modules/network"
 }
 
 module "security_groups" {
-  source = "modules/security"
+  source = "./modules/security"
   vpc_id = module.vpc_and_subnet.vpc_id
 }
 
@@ -47,7 +47,7 @@ resource "aws_instance" "test_instance" {
 }
 
 output "inventory" {
-  value = templatefile("${path.cwd}/template.tftpl",
+  value = templatefile("${path.cwd}/inventory.tftpl",
     {
       instances = aws_instance.test_instance
     }
@@ -59,7 +59,7 @@ output "instance_ids" {
 }
 
 output "instance_info" {
-  value = templatefile("${path.cwd}/instance_info.tmpl",
+  value = templatefile("${path.cwd}/instance_info.tftpl",
     {
         instances = aws_instance.test_instance
     })
