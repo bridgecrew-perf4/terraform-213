@@ -9,46 +9,43 @@ resource "aws_key_pair" "keypair" {
   public_key = file("${path.cwd}/.ssh/id_rsa.pub")
 }
 
-resource "aws_instance" "master" {
-  // TODO ("Remove hardcoding of SG's")
-  count = var.master_count
-  ami = var.ami
-  instance_type = var.instance_flavour
-  key_name = aws_key_pair.keypair.key_name
-  vpc_security_group_ids = ["sg-085bf961c3b15f5af", "sg-0af6e52cbcd04ffda"]
-  subnet_id = var.subnet_id
-  user_data = <<EOF
-  runcmd:
-  - sudo yum install -y docker
-  EOF
-
-  lifecycle {
-    ignore_changes = [user_data]
-  }
+module "security_groups" {
+  source = "./modules/security/"
+  vpc_id = var.vpc_id
+  subnet_cidr = var.subnet_cidr
 }
 
-resource "aws_instance" "worker" {
+module "masters" {
+  source = "./modules/master"
+  count = var.master_count
+  ami = var.ami
+  az = element(local.availability_zones, count.index)
+  keypair_name = aws_key_pair.keypair.key_name
+  master_flavour = var.master_flavour
+  subnet_id = var.subnet_id
+  security_group_ids = concat(module.security_groups.common_sg_ids, module.security_groups.master_sg_ids)
+}
+
+module "workers" {
+  source = "./modules/worker"
   count = var.worker_count
   ami = var.ami
-  instance_type = var.instance_flavour
-  key_name = aws_key_pair.keypair.key_name
-  vpc_security_group_ids = ["sg-085bf961c3b15f5af", "sg-0af6e52cbcd04ffda"]
+  az = element(local.availability_zones, count.index)
+  keypair_name = aws_key_pair.keypair.key_name
+  worker_flavour = var.worker_flavour
   subnet_id = var.subnet_id
-  user_data = <<EOF
-  runcmd:
-  - sudo yum install -y docker
-  EOF
-
-  lifecycle {
-    ignore_changes = [user_data]
-  }
+  security_group_ids = concat(module.security_groups.common_sg_ids, module.security_groups.worker_sg_ids)
 }
 
 output "inventory" {
-  value = templatefile("${path.cwd}/template.tmpl",
+  value = templatefile("${path.cwd}/template.tftpl",
     {
-      master_instances = aws_instance.master
-      worker_instances = aws_instance.worker
+      master_instances = module.masters[*].master
+      worker_instances = module.workers[*].worker
     }
   )
+}
+
+output "instance_ids" {
+  value = join(" ", concat(module.masters[*].master.id, module.workers[*].worker.id))
 }

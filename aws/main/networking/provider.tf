@@ -5,22 +5,18 @@ terraform {
       version = "~> 3.0"
     }
   }
-/*
-  Commenting to maintain tfstate locally. also tfvars files cannot be used if remote backend is used.
-  upload local tfstate and uncomment if using again.
 
   backend "remote" {
     organization = "nkjcorp"
 
     workspaces {
-      name = "aws"
+      name = "networking"
     }
-  }*/
+  }
 }
 
 provider "aws" {
   region = "ap-south-1" // Mumbai region
-  shared_credentials_file = "${path.cwd}/.aws/creds"
   /*
    * This file should contain an aws-credentials in the below format
         [default]
@@ -30,4 +26,6 @@ provider "aws" {
     Don't worry they are not the original credentials.
     Refer the AWS docs page for more info: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
   */
+
+  shared_credentials_file = "../../credentials/credentials"
 }

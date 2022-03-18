@@ -1,4 +1,13 @@
-variable "instance_flavour" {
+
+variable "region" {
+  default = "ap-south-1"
+}
+
+variable "instance_name" {
+
+}
+
+variable "instance_type" {
   default = "t2.micro"
 }
 
@@ -13,8 +22,6 @@ variable "instance_count" {
   description = "The number of instances to create"
 }
 
-variable "instance_name" {
-  default = "terraform-managed"
-  description = "Gives a name to the EC2 instance to identify in AWS console"
-  type = string
+locals {
+  availability_zones = [for s in ["a", "b", "c"]: format("%s%s", var.region, s)]
 }
