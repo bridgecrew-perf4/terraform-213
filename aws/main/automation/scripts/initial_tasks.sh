@@ -1,12 +1,12 @@
-sudo yum install -y docker httpd
-sudo su
+# Register with Redhat for RHEL VMs
+subscription-manager register --username nishantkj911
+subscription-manager attach --auto
 
-systemctl enable docker
-systemctl enable httpd
+# update machine
+dnf -y update
 
-systemctl start docker
-systemctl start httpd
+# install ansible
+yum install -y ansible
 
-
-vi index.html
-vi console/a.html
+ansible-playbook playbooks/initial-tasks.yml
+ansible-playbook playbook/install-master.yml

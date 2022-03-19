@@ -1,0 +1,12 @@
+- hosts: all
+  tasks:
+    - import_playbook: initial-tasks.yml
+
+- hosts: localhost
+  tasks:
+    - include_role:
+        name: install-master
+
+- hosts: workers
+  tasks:
+    - include_role: install-worker

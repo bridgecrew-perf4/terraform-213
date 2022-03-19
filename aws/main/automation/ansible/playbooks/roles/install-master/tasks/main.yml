@@ -1,0 +1,24 @@
+- name: "Install kubernetes repo"
+  become: true
+  yum_repository:
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+    name: kubernetes
+    description: Kubernetes
+    file: kubernetes
+    enabled: yes
+    gpgcheck: yes
+    repo_gpgcheck: yes
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+- name: "Install kubelet kubeadm and kubectl CLIs"
+  yum:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: latest
+
+- name: "Enable kubelet service"
+  systemd:
+    name: kubelet
+    enabled: yes

@@ -1,0 +1,15 @@
+- name: Add Docker-CE repository
+  shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo" # using centos here since RHEL is f-ed up in docker repo
+
+- name: Install Docker
+  yum:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+- name: Start docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes

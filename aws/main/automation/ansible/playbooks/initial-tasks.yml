@@ -1,0 +1,26 @@
+- hosts: localhost
+  become: true
+  tasks:
+    - name: Update the system
+      dnf:
+        name: "*"
+        state: latest
+
+    - name: Remove existing installation of docker
+      yum:
+        name:
+          - docker
+          - docker-client
+          - docker-client-latest
+          - docker-common
+          - docker-latest
+          - docker-latest-logrotate
+          - docker-logrotate
+          - docker-engine
+          - podman
+          - runc
+        state: absent
+
+    - yum:
+        name: yum-utils
+        state: present
