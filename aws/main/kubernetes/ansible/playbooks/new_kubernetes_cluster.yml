@@ -1,0 +1,20 @@
+- hosts: all
+  tasks:
+    - import_playbook:
+        name: initial-tasks.yml
+
+- hosts: masters
+  tasks:
+    - include_role:
+        name: install-master
+    - name: Create new user
+      run_once: true
+      shell: |
+        kubeadm kubeconfig user --config kubeadm-config.yaml --org devops --client-name nishant > kubeconfig
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf create clusterrolebinding nishant-cluster-admin-crb --clusterrole=cluster-admin --user=nishant
+        mv kubeconfig ~/.kube/config
+
+- hosts: workers
+  tasks:
+    - include_role:
+        name: install-worker

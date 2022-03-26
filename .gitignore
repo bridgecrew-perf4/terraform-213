@@ -1,12 +1,15 @@
-# Ignore any aws config/credential files present
+# Aany aws config/credential files present
 **/.aws/*
 /aws/credentials/
 
-# Ignore any id_rsa files created
+# Any id_rsa/inventory files created
 **/*id_rsa
 **/.ssh/
+**/inventory
 
-/aws/Pricing
-/aws/main/**/outputs/
+# Terraform related extra files
 /aws/main/**/plan
 **/.terraform/
+
+# Other unrelated files
+/aws/Pricing
