@@ -1,0 +1,15 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+caCertPath: /etc/kubernetes/pki/ca.crt
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: 10.0.123.14:6443       # TODO: Take this from terraform/inventory
+    token: nsifmi.ep761b0ljrgf97t8            # TODO: Get this from kubeadm init output.
+    unsafeSkipCAVerification: true
+  timeout: 5m0s
+  tlsBootstrapToken: nsifmi.ep761b0ljrgf97t8
+kind: JoinConfiguration
+nodeRegistration:
+  criSocket: /run/containerd/containerd.sock
+  imagePullPolicy: IfNotPresent
+  name: worker-1          # TODO: Make this scalable for multiple nodes.
+  taints: null

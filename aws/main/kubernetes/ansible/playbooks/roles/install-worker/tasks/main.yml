@@ -1,0 +1,43 @@
+- name: "Install kubernetes repo"
+  become: true
+  yum_repository:
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+    name: kubernetes
+    description: Kubernetes
+    file: kubernetes
+    enabled: yes
+    gpgcheck: yes
+    repo_gpgcheck: yes
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    exclude: kubelet kubectl kubeadm
+
+- name: "Install kubelet kubeadm and kubectl CLIs"
+  yum:
+    name:
+      - kubelet
+      - kubeadm
+    state: latest
+    disable_excludes: kubernetes
+
+- name: "Enable kubelet service"
+  systemd:
+    name: kubelet
+    enabled: yes
+
+- name: Comment out containerd disable plugin config (to be run manually)
+  shell: |
+    vi /etc/containerd/config.toml
+    #disabled_plugins = ["cri"]
+    systemctl restart containerd
+# check out more on https://github.com/containerd/containerd/issues/4581
+  when: false
+
+- name: Generate the kubeadm join configurations
+  shell: |
+    kubeadm config print join-defaults > kubeadmin-join-config.yml
+  when: false
+
+- name: Run kubeadm join to admit the node into the cluster
+  shell: "kubeadm join --config kubeadmin-join-config.yml --ignore-preflight-errors all"
+
+# TODO: Add "worker" role to the node.

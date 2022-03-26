@@ -1,3 +1,18 @@
+- name: Remove existing installation of docker
+  yum:
+    name:
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common
+      - docker-latest
+      - docker-latest-logrotate
+      - docker-logrotate
+      - docker-engine
+      - podman
+      - runc
+    state: absent
+
 - name: Add Docker-CE repository
   shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo" # using centos here since RHEL is f-ed up in docker repo
 
